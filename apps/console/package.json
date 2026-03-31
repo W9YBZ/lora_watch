@@ -1,0 +1,16 @@
+{
+  "name": "@lora-watch/console",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest run src/console-model.test.ts"
+  },
+  "dependencies": {
+    "@lora-watch/core": "file:../../packages/core",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  }
+}

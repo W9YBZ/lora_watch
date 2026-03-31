@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "author": "Codex",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-s3-devkitc-1",
+      "id": "esp",
+      "top": -28.4,
+      "left": -149.6,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-pushbutton-6mm",
+      "id": "btnConfirm",
+      "top": 169.8,
+      "left": 109.2,
+      "attrs": {
+        "color": "green",
+        "xray": "1"
+      }
+    },
+    {
+      "type": "wokwi-pushbutton-6mm",
+      "id": "btnBack",
+      "top": 169.8,
+      "left": 186,
+      "attrs": {
+        "color": "blue",
+        "xray": "1"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "esp:TX",
+      "$serialMonitor:RX",
+      "",
+      []
+    ],
+    [
+      "esp:RX",
+      "$serialMonitor:TX",
+      "",
+      []
+    ],
+    [
+      "esp:GND.4",
+      "btnConfirm:2.r",
+      "black",
+      [
+        "h19.2",
+        "v134.4",
+        "h192"
+      ]
+    ],
+    [
+      "esp:GND.4",
+      "btnBack:2.r",
+      "black",
+      [
+        "h19.2",
+        "v134.4",
+        "h278.4"
+      ]
+    ],
+    [
+      "esp:16",
+      "btnConfirm:1.l",
+      "limegreen",
+      [
+        "h0",
+        "v144",
+        "h268.8"
+      ]
+    ],
+    [
+      "esp:17",
+      "btnBack:1.l",
+      "deepskyblue",
+      [
+        "h0",
+        "v153.6",
+        "h336"
+      ]
+    ]
+  ],
+  "serialMonitor": {
+    "display": "always",
+    "newline": "lf"
+  },
+  "dependencies": {}
+}

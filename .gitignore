@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+.DS_Store
+*.log
+.vite/
+*.tsbuildinfo
+packages/core/generated/
+firmware/wokwi/generated/
+!packages/core/generated/.gitkeep
+!firmware/wokwi/generated/.gitkeep

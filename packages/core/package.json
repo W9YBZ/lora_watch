@@ -1,0 +1,23 @@
+{
+  "name": "@lora-watch/core",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./generated/protocol-manifest.json": "./generated/protocol-manifest.json"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "gen:protocol": "tsx ./scripts/generate-protocol.ts"
+  },
+  "dependencies": {
+    "xstate": "5.30.0",
+    "zod": "4.3.6"
+  }
+}
