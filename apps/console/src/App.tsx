@@ -30,7 +30,7 @@ export function App() {
   const [txOk, setTxOk] = useState(true);
   const [txMessage, setTxMessage] = useState("uplink ok");
   const [selectedProfile, setSelectedProfile] = useState<PowerProfileId>(view.snapshot.requestedPowerProfile);
-  const [selectedInputEvent, setSelectedInputEvent] = useState<InputEventType>("wake");
+  const [selectedInputEvent, setSelectedInputEvent] = useState<InputEventType>("m");
   const [longPress, setLongPress] = useState(false);
   const displayFrame = buildDisplayFrame(view.snapshot);
 

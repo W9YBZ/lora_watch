@@ -2,8 +2,10 @@
 #include "generated/protocol_ids.h"
 
 namespace {
-constexpr int PIN_CONFIRM = 16;
-constexpr int PIN_BACK = 17;
+constexpr int PIN_M = 16;
+constexpr int PIN_EXIT = 17;
+constexpr int PIN_UP = 18;
+constexpr int PIN_DOWN = 8;
 
 constexpr unsigned long LONG_PRESS_MS = 700;
 constexpr unsigned long BOOT_SPLASH_MS = 900;
@@ -113,7 +115,7 @@ class SerialInkDisplay {
     line(126, "GPS: " + snapshot.gpsStatus);
     line(144, "LoRa: " + snapshot.radioStatus);
     line(162, "Power: " + snapshot.powerProfile);
-    line(180, "Confirm=open | long confirm=toggle tracking");
+    line(180, "M=open | long M=toggle tracking");
   }
 
   void trackingFrame(const WatchState &snapshot) {
@@ -121,8 +123,8 @@ class SerialInkDisplay {
     line(24, String("Mode: ") + (snapshot.trackingActive ? "ON" : "OFF"));
     line(48, "GPS: " + snapshot.gpsStatus);
     line(72, "Profile: " + snapshot.powerProfile);
-    line(96, "Confirm toggles tracking");
-    line(120, "Back returns home");
+    line(96, "M toggles tracking");
+    line(120, "EXIT returns home");
   }
 
   void locationFrame(const WatchState &snapshot) {
@@ -150,8 +152,8 @@ class SerialInkDisplay {
     line(24, "Profile: " + snapshot.powerProfile);
     line(48, "Timeout: " + String(screenTimeoutMs(snapshot.powerProfile) / 1000) + "s");
     line(72, "Display: serial 200x200");
-    line(96, "Touch events via bridge only");
-    line(120, "Buttons: confirm/back");
+    line(96, "Input: M / EXIT / UP / DOWN");
+    line(120, "Button-only navigation");
   }
 
   unsigned long screenTimeoutMs(const String &profile) {
@@ -169,8 +171,10 @@ class SerialInkDisplay {
 };
 
 SerialInkDisplay display;
-ButtonState confirmButton{PIN_CONFIRM, false, 0};
-ButtonState backButton{PIN_BACK, false, 0};
+ButtonState mButton{PIN_M, false, 0};
+ButtonState exitButton{PIN_EXIT, false, 0};
+ButtonState upButton{PIN_UP, false, 0};
+ButtonState downButton{PIN_DOWN, false, 0};
 
 String serialBuffer;
 unsigned long bootAt = 0;
@@ -282,13 +286,6 @@ void openSelectedCard() {
 }
 
 void applyInputEvent(const String &eventName, bool longPress = false) {
-  if (eventName == "wake") {
-    state.screen = SCREEN_HOME;
-    noteInteraction();
-    markDirty();
-    return;
-  }
-
   if (eventName == "timeout") {
     state.screen = SCREEN_BOOT;
     markDirty();
@@ -302,35 +299,39 @@ void applyInputEvent(const String &eventName, bool longPress = false) {
     return;
   }
 
-  if (eventName == "back") {
-    state.screen = SCREEN_HOME;
+  if (eventName == "exit") {
+    if (state.screen == SCREEN_HOME) {
+      state.screen = SCREEN_BOOT;
+    } else {
+      state.screen = SCREEN_HOME;
+    }
     noteInteraction();
     markDirty();
     return;
   }
 
-  if (eventName == "touch.swipe_up") {
-    if (state.screen == SCREEN_HOME) {
-      selectNextCard(1);
-    }
-    return;
-  }
-
-  if (eventName == "touch.swipe_down") {
+  if (eventName == "up") {
     if (state.screen == SCREEN_HOME) {
       selectNextCard(-1);
     }
     return;
   }
 
-  if (eventName == "confirm" && longPress && state.screen == SCREEN_HOME) {
+  if (eventName == "down") {
+    if (state.screen == SCREEN_HOME) {
+      selectNextCard(1);
+    }
+    return;
+  }
+
+  if (eventName == "m" && longPress && state.screen == SCREEN_HOME) {
     state.trackingActive = !state.trackingActive;
     noteInteraction();
     markDirty();
     return;
   }
 
-  if (eventName == "confirm") {
+  if (eventName == "m") {
     if (state.screen == SCREEN_HOME) {
       openSelectedCard();
     } else if (state.screen == SCREEN_TRACKING) {
@@ -339,16 +340,6 @@ void applyInputEvent(const String &eventName, bool longPress = false) {
       markDirty();
     }
     return;
-  }
-
-  if (eventName == "touch.tap") {
-    if (state.screen == SCREEN_HOME) {
-      openSelectedCard();
-    } else {
-      state.screen = SCREEN_HOME;
-      noteInteraction();
-      markDirty();
-    }
   }
 }
 
@@ -418,7 +409,7 @@ void applyCommand(const String &json) {
     noteInteraction();
     markDirty();
   } else if (type == "input.inject") {
-    applyInputEvent(readStringField(json, "event", "wake"), readBoolField(json, "longPress", false));
+    applyInputEvent(readStringField(json, "event", "m"), readBoolField(json, "longPress", false));
   }
 }
 
@@ -447,14 +438,14 @@ void handleButton(ButtonState &button, const String &eventName) {
   if (!pressed && button.wasPressed) {
     const unsigned long heldMs = millis() - button.pressedAt;
     button.wasPressed = false;
-    applyInputEvent(eventName, eventName == "confirm" && heldMs >= LONG_PRESS_MS);
+    applyInputEvent(eventName, eventName == "m" && heldMs >= LONG_PRESS_MS);
   }
 }
 
 void enforceTimeout() {
   if (state.screen == SCREEN_BOOT) {
     if (millis() - bootAt >= BOOT_SPLASH_MS) {
-      applyInputEvent("wake");
+      applyInputEvent("m");
     }
     return;
   }
@@ -466,8 +457,10 @@ void enforceTimeout() {
 }  // namespace
 
 void setup() {
-  pinMode(PIN_CONFIRM, INPUT_PULLUP);
-  pinMode(PIN_BACK, INPUT_PULLUP);
+  pinMode(PIN_M, INPUT_PULLUP);
+  pinMode(PIN_EXIT, INPUT_PULLUP);
+  pinMode(PIN_UP, INPUT_PULLUP);
+  pinMode(PIN_DOWN, INPUT_PULLUP);
 
   display.begin();
   bootAt = millis();
@@ -478,8 +471,10 @@ void setup() {
 
 void loop() {
   handleSerial();
-  handleButton(confirmButton, "confirm");
-  handleButton(backButton, state.screen == SCREEN_BOOT ? "wake" : "back");
+  handleButton(mButton, "m");
+  handleButton(exitButton, "exit");
+  handleButton(upButton, "up");
+  handleButton(downButton, "down");
   enforceTimeout();
   renderScreen();
   delay(16);

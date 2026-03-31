@@ -23,12 +23,10 @@ export const SCREEN_IDS = [
 export type ScreenId = (typeof SCREEN_IDS)[number];
 
 export const INPUT_EVENTS = [
-  "wake",
-  "back",
-  "confirm",
-  "touch.tap",
-  "touch.swipe_up",
-  "touch.swipe_down",
+  "m",
+  "exit",
+  "up",
+  "down",
   "timeout"
 ] as const;
 

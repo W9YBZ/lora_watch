@@ -124,7 +124,7 @@ npm run gen:protocol
 
 - BLE packet composition and validation in the web console
 - packet fragmentation/reassembly for simulated BLE MTU handling
-- menu navigation with button and touch-like injected events
+- menu navigation with four-button input (`M / EXIT / UP / DOWN`)
 - GPS fix and loss simulation
 - LoRa RX and TX result simulation
 - power profile switching and low-battery fallback policy

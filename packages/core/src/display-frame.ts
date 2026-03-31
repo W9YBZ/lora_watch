@@ -55,8 +55,8 @@ export function buildDisplayFrame(snapshot: DeviceSnapshot): DisplayFrame {
           line(24, `Mode: ${snapshot.trackingActive ? "ON" : "OFF"}`),
           line(48, `GPS: ${snapshot.gps.status}`),
           line(72, `Profile: ${snapshot.effectivePowerProfile}`),
-          line(96, "Confirm toggles tracking", "muted"),
-          line(120, "Back returns home", "muted")
+          line(96, "M toggles tracking", "muted"),
+          line(120, "EXIT returns home", "muted")
         ]
       };
     case "LocationDetail":
@@ -99,8 +99,8 @@ export function buildDisplayFrame(snapshot: DeviceSnapshot): DisplayFrame {
           line(24, `Profile: ${snapshot.effectivePowerProfile}`),
           line(48, `Timeout: ${screenTimeoutSeconds(snapshot.effectivePowerProfile)}s`),
           line(72, "Display: serial 200x200"),
-          line(96, "Touch events via bridge only", "muted"),
-          line(120, "Buttons: confirm/back", "muted")
+          line(96, "Input: M / EXIT / UP / DOWN", "muted"),
+          line(120, "Button-only navigation", "muted")
         ]
       };
     case "Home":
@@ -119,7 +119,7 @@ export function buildDisplayFrame(snapshot: DeviceSnapshot): DisplayFrame {
           line(126, `GPS: ${snapshot.gps.status}`, "muted"),
           line(144, `LoRa: ${snapshot.radio.status}`, "muted"),
           line(162, `Power: ${snapshot.effectivePowerProfile}`, "muted"),
-          line(180, "Confirm=open | long confirm=toggle tracking", "muted")
+          line(180, "M=open | long M=toggle tracking", "muted")
         ]
       };
     }

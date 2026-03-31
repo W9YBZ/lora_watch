@@ -176,8 +176,8 @@ export class ConsoleModel {
 
   injectInput(eventType: InputEventType, longPress = false): void {
     const event =
-      eventType === "confirm"
-        ? { type: "confirm" as const, longPress }
+      eventType === "m"
+        ? { type: "m" as const, longPress }
         : ({ type: eventType } as const);
 
     this.simulator.dispatchInput(event);

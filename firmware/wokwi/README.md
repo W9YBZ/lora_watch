@@ -6,13 +6,13 @@ This directory contains a first-phase Arduino/Wokwi shell for the wearable simul
 
 - `ESP32-S3-DevKitC-1`
 - virtual `200x200` serial e-ink style display
-- `2` buttons: `confirm` and `back`
+- `4` buttons: `M`, `EXIT`, `UP`, `DOWN`
 
 ## Notes
 
 - Wokwi does not directly simulate the exact target `200x200` serial panel, so this phase uses a serial-driven virtual display.
 - The watch UI is rendered as structured `200x200` frame text in the Serial Monitor.
-- Touch-like navigation is still available through `input.inject` bridge commands, even though the physical Wokwi shell now only exposes buttons.
+- The watch shell is button-only in this phase, and the serial bridge mirrors the same `M / EXIT / UP / DOWN` events.
 
 ## Serial bridge commands
 
@@ -25,8 +25,10 @@ Paste newline-delimited JSON commands into the Wokwi serial monitor:
 {"type":"lora.rx","payloadHex":"A10BEE","rssi":-112,"snr":7.5}
 {"type":"lora.tx_result","ok":false,"message":"uplink timeout"}
 {"type":"power.set","profile":"saver"}
-{"type":"input.inject","event":"touch.swipe_up","longPress":false}
-{"type":"input.inject","event":"touch.tap","longPress":false}
+{"type":"input.inject","event":"down","longPress":false}
+{"type":"input.inject","event":"m","longPress":false}
+{"type":"input.inject","event":"exit","longPress":false}
+{"type":"input.inject","event":"m","longPress":true}
 ```
 
 The browser console app produces the same command format in its `Packet log + Wokwi bridge` panel.

@@ -12,9 +12,9 @@
     },
     {
       "type": "wokwi-pushbutton-6mm",
-      "id": "btnConfirm",
+      "id": "btnM",
       "top": 169.8,
-      "left": 109.2,
+      "left": 52,
       "attrs": {
         "color": "green",
         "xray": "1"
@@ -22,11 +22,31 @@
     },
     {
       "type": "wokwi-pushbutton-6mm",
-      "id": "btnBack",
+      "id": "btnExit",
       "top": 169.8,
-      "left": 186,
+      "left": 128.8,
+      "attrs": {
+        "color": "red",
+        "xray": "1"
+      }
+    },
+    {
+      "type": "wokwi-pushbutton-6mm",
+      "id": "btnUp",
+      "top": 169.8,
+      "left": 205.6,
       "attrs": {
         "color": "blue",
+        "xray": "1"
+      }
+    },
+    {
+      "type": "wokwi-pushbutton-6mm",
+      "id": "btnDown",
+      "top": 169.8,
+      "left": 282.4,
+      "attrs": {
+        "color": "yellow",
         "xray": "1"
       }
     }
@@ -46,42 +66,82 @@
     ],
     [
       "esp:GND.4",
-      "btnConfirm:2.r",
+      "btnM:2.r",
       "black",
       [
         "h19.2",
         "v134.4",
-        "h192"
+        "h134.8"
       ]
     ],
     [
       "esp:GND.4",
-      "btnBack:2.r",
+      "btnExit:2.r",
       "black",
       [
         "h19.2",
         "v134.4",
-        "h278.4"
+        "h211.6"
+      ]
+    ],
+    [
+      "esp:GND.4",
+      "btnUp:2.r",
+      "black",
+      [
+        "h19.2",
+        "v134.4",
+        "h288.4"
+      ]
+    ],
+    [
+      "esp:GND.4",
+      "btnDown:2.r",
+      "black",
+      [
+        "h19.2",
+        "v134.4",
+        "h365.2"
       ]
     ],
     [
       "esp:16",
-      "btnConfirm:1.l",
+      "btnM:1.l",
       "limegreen",
       [
         "h0",
         "v144",
-        "h268.8"
+        "h211.6"
       ]
     ],
     [
       "esp:17",
-      "btnBack:1.l",
-      "deepskyblue",
+      "btnExit:1.l",
+      "red",
       [
         "h0",
         "v153.6",
-        "h336"
+        "h278.4"
+      ]
+    ],
+    [
+      "esp:18",
+      "btnUp:1.l",
+      "deepskyblue",
+      [
+        "h0",
+        "v163.2",
+        "h345.2"
+      ]
+    ],
+    [
+      "esp:8",
+      "btnDown:1.l",
+      "gold",
+      [
+        "h0",
+        "v172.8",
+        "h412"
       ]
     ]
   ],

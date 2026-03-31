@@ -8,12 +8,10 @@ export interface MenuContext {
 }
 
 export type MenuInputEvent =
-  | { type: "wake" }
-  | { type: "back" }
-  | { type: "confirm"; longPress?: boolean }
-  | { type: "touch.tap" }
-  | { type: "touch.swipe_up" }
-  | { type: "touch.swipe_down" }
+  | { type: "m"; longPress?: boolean }
+  | { type: "exit" }
+  | { type: "up" }
+  | { type: "down" }
   | { type: "timeout" };
 
 export interface MenuSnapshot {
@@ -46,34 +44,45 @@ export const MenuMachine = createMachine({
   states: {
     Boot: {
       on: {
-        wake: {
+        m: {
+          target: "Home"
+        },
+        exit: {
+          target: "Home"
+        },
+        up: {
+          target: "Home"
+        },
+        down: {
           target: "Home"
         }
       }
     },
     Home: {
       on: {
-        "touch.swipe_up": {
-          actions: assign({
-            selectedCardIndex: ({ context }) => (context.selectedCardIndex + 1) % HOME_CARDS.length
-          })
-        },
-        "touch.swipe_down": {
+        up: {
           actions: assign({
             selectedCardIndex: ({ context }) =>
               (context.selectedCardIndex - 1 + HOME_CARDS.length) % HOME_CARDS.length
           })
         },
-        confirm: [
+        down: {
+          actions: assign({
+            selectedCardIndex: ({ context }) => (context.selectedCardIndex + 1) % HOME_CARDS.length
+          })
+        },
+        m: [
           {
-            guard: ({ event }) => event.type === "confirm" && event.longPress === true,
+            guard: ({ event }) => event.type === "m" && event.longPress === true,
             actions: assign({
               trackingActive: ({ context }) => !context.trackingActive
             })
           },
           ...routeToSelectedCard
         ],
-        "touch.tap": routeToSelectedCard,
+        exit: {
+          target: "Boot"
+        },
         timeout: {
           target: "Boot"
         }
@@ -81,10 +90,10 @@ export const MenuMachine = createMachine({
     },
     Tracking: {
       on: {
-        back: {
+        exit: {
           target: "Home"
         },
-        confirm: {
+        m: {
           actions: assign({
             trackingActive: ({ context }) => !context.trackingActive
           })
@@ -96,7 +105,7 @@ export const MenuMachine = createMachine({
     },
     LocationDetail: {
       on: {
-        back: {
+        exit: {
           target: "Home"
         },
         timeout: {
@@ -106,7 +115,7 @@ export const MenuMachine = createMachine({
     },
     RadioStatus: {
       on: {
-        back: {
+        exit: {
           target: "Home"
         },
         timeout: {
@@ -116,7 +125,7 @@ export const MenuMachine = createMachine({
     },
     Settings: {
       on: {
-        back: {
+        exit: {
           target: "Home"
         },
         timeout: {
@@ -133,15 +142,15 @@ export function createStartedMenuActor(initialContext?: Partial<MenuContext>) {
   actor.start();
 
   if ((initialContext?.selectedCardIndex ?? 0) > 0) {
-    // Bring the actor in sync with a non-default card by replaying swipes.
+    // Bring the actor in sync with a non-default card by replaying DOWN presses.
     for (let index = 0; index < (initialContext?.selectedCardIndex ?? 0); index += 1) {
-      actor.send({ type: "touch.swipe_up" });
+      actor.send({ type: "down" });
     }
   }
 
   if (initialContext?.trackingActive) {
-    actor.send({ type: "wake" });
-    actor.send({ type: "confirm", longPress: true });
+    actor.send({ type: "m" });
+    actor.send({ type: "m", longPress: true });
   }
 
   return actor;
